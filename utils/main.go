@@ -51,13 +51,13 @@ func loadConfig(){
 	}
 }
 
-func err_message(writer http.ResponseWriter, request *http.Request, msg string){
+func ErrorMessage(writer http.ResponseWriter, request *http.Request, msg string){
 	url := []string{"/err?msg=", msg} 
 	http.Redirect(writer, request, strings.Join(url, ""), 302)
 }
 
 // Checks if the user is logged in and has a session, if not err is not nil 
-func session(writer http.ResponseWriter, request *http.Request) (sess data.Session, err error){
+func Session(writer http.ResponseWriter, request *http.Request) (sess data.Session, err error){
 	cookie, err := request.Cookie("_cookie") 
 	if err == nil{
 		sess = data.Session{Uuid: cookie.Value}
@@ -70,7 +70,7 @@ func session(writer http.ResponseWriter, request *http.Request) (sess data.Sessi
 
 // parse HTML templates 
 // pass in a list of file names, and get a template 
-func parseTemplateFiles(filenames ...string) (t *template.Template){
+func ParseTemplateFiles(filenames ...string) (t *template.Template){
 	var files []string 
 	t = template.New("layout") 
 	for _, file := range filenames{
@@ -80,7 +80,7 @@ func parseTemplateFiles(filenames ...string) (t *template.Template){
 	return 
 }
 
-func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...string){
+func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...string){
 	var files []string 
 	for _, file := range filenames{
 		files = append(files, fmt.Sprintf("templates/%s.html", file))
@@ -91,21 +91,21 @@ func generateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 }
 
 // for logging 
-func info(args 	...interface{}){
+func Info(args 	...interface{}){
 	logger.SetPrefix("INFO ") 
 	logger.Println(args...)
 }
 
-func danger(args ...interface{}){
+func Danger(args ...interface{}){
 	logger.SetPrefix("ERROR ") 
 	logger.Println("args...")
 }
 
-func warning(args ...interface{}){
+func Warning(args ...interface{}){
 	logger.SetPrefix("WARNING ") 
 	logger.Println(args...) 
 }
 
-func version() string{
+func Version() string{
 	return "0.0.1"
 }
