@@ -15,7 +15,7 @@ import (
 
 type Configuration struct{
 	Address			string 
-	ReadTimoeout	int64 
+	ReadTimeout		int64 
 	WriteTimeout	int64
 	Static			string 
 }
@@ -23,8 +23,10 @@ type Configuration struct{
 var config Configuration 
 var logger *log.Logger 
 
+var ROOT_DIR string = "./"
+
 // function for printing to stdout 
-func pStdout(a ...interface{}){
+func Pstdout(a ...interface{}){
 	fmt.Println(a)
 }
 
@@ -38,8 +40,20 @@ func init(){
 	logger = log.New(file, "INFO", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
+func LoadConfiguration(file string) Configuration{
+	var config Configuration 
+	configFile, err := os.Open(file) 
+	if err != nil{
+		fmt.Println(err.Error())
+	}
+	defer configFile.Close() 
+	jsonParser := json.NewDecoder(configFile) 
+	jsonParser.Decode(&config) 
+	return config 
+}
+
 func loadConfig(){
-	file, err := os.Open("config.json") 
+	file, err := os.Open(ROOT_DIR + "config.json") 
 	if err!= nil{
 		log.Fatalln("Cannot open config file", err)
 	}
@@ -53,7 +67,7 @@ func loadConfig(){
 
 func ErrorMessage(writer http.ResponseWriter, request *http.Request, msg string){
 	url := []string{"/err?msg=", msg} 
-	http.Redirect(writer, request, strings.Join(url, ""), 302)
+	http.Redirect(writer, request, strings.Join(url, ""), http.StatusFound)
 }
 
 // Checks if the user is logged in and has a session, if not err is not nil 
