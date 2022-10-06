@@ -1,12 +1,24 @@
-package data 
-
+package data
 
 import (
+	"database/sql"
+	"fmt"
 	"testing"
 )
 
+var dB *sql.DB 
+
+func init(){
+	var err error  
+	dB, err = sql.Open("mysql", "dbname=chatapp sslmode=disable")
+	if err != nil{
+		fmt.Errorf("could not open database connecton %v", err)
+	}
+	
+}
+
 func ThreadDeleteAll() (err error){
-	db := Db() 
+	db := dB
 	defer db.Close() 
 	statement := "delete from threads"
 	_, err = db.Exec(statement)
